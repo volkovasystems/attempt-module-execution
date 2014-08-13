@@ -4,3 +4,6 @@
 [submodule "camelize-namespace"]
 	path = camelize-namespace
 	url = git@github.com:volkovasystems/camelize-namespace.git
+[submodule "parse-command-argument-list"]
+	path = parse-command-argument-list
+	url = git@github.com:volkovasystems/parse-command-argument-list.git
