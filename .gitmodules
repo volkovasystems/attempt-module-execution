@@ -1,3 +1,6 @@
 [submodule "extract-parameter-list-from-function"]
 	path = extract-parameter-list-from-function
 	url = git@github.com:volkovasystems/extract-parameter-list-from-function.git
+[submodule "camelize-namespace"]
+	path = camelize-namespace
+	url = git@github.com:volkovasystems/camelize-namespace.git
