@@ -40,10 +40,60 @@
 	@end-module-documentation
 
 	@include:
+	    {
+	        "extract-parameter-list-from-function.js@github.com/volkovasystems": "extractParameterListFromFunction",
+	        "camelize-namespace.js@github.com/volkovasystems": "camelizeNamespace",
+	        "path@nodejs": "path"
+	    }
 	@end-include
 */
 var attemptModuleExecution = function attemptModuleExecution( moduleMethod ){
 
+    var commandLineParameterList = process.argv;
+    var commandFilePath = commandLineParameterList[ 1 ];
+
+    var commandFileName = commandFilePath.split( path.sep ).reverse( )[ 0 ];
+    var commandMethodName = camelizeNamespace( commandFileName );
+
+    if( moduleMethod.name != commandMethodName ){
+        var error = new Error( "fatal:method and command does not match" );
+        console.error( error );
+        throw error;
+    }
+
+    var methodParameterList = extractParameterListFromFunction( moduleMethod );
+
+    var commandArgumentSet = parseCommandArgumentList( );
+
+    var argumentValueList = [ ];
+    var parameterName = "";
+
+    var methodParameterListLength = methodParameterList.length;
+    for( var index = 0; index < methodParameterListLength; index++ ){
+
+        parameterName = methodParameterList[ index ];
+
+        if( parameterName in commandArgumentSet ){
+            argumentValueList[ index ] = commandArgumentSet[ parameterName ]
+        }
+
+        if( index in commandArgumentSet ){
+            argumentValueList[ index ] = commandArgumentSet[ index ];
+        }
+    }
+
+    var result = moduleMethod.apply( null, argumentValueList );
+
+    if( typeof result != "undefined" ){
+        console.log(  )
+    }
+
 };
+
+var parseCommandArgumentList = require( "./parse-command-argument-list/parse-command-argument-list.js" );
+var extractParameterListFromFunction = require( "./extract-parameter-list-from-function/extract-parameter-list-from-function.js" );
+var camelizeNamespace = require( "./camelize-namespace/camelize-namespace.js" );
+
+var path = require( "path" );
 
 module.exports = attemptModuleExecution;
