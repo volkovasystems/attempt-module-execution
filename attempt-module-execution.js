@@ -41,6 +41,8 @@
 
 	@include:
 		{
+		    "transform-json-to-base64.js@github.com/volkovasystems": "transformJSONToBase64"
+		    "parse-command-argument-list.js@github.com/volkovasystems": "parseCommandArgumentList",
 			"extract-parameter-list-from-function.js@github.com/volkovasystems": "extractParameterListFromFunction",
 			"camelize-namespace.js@github.com/volkovasystems": "camelizeNamespace",
 			"path@nodejs": "path"
@@ -68,60 +70,66 @@ var attemptModuleExecution = function attemptModuleExecution( moduleMethod ){
 	var argumentValueList = [ ];
 	var parameterName = "";
 
+    var callback = function callback( error, result ){
+        if( error ){
+            console.error( error );
+
+        }else{
+            if( typeof result == "string" ||
+                typeof result == "number" ||
+                typeof result == "boolean" )
+            {
+                console.log( result );
+
+            }else if( typeof result == "object" ){
+                try{
+                    result = transformJSONToBase64( result );
+                    result = "@transform-base64-to-json:" + result;
+
+                    console.log( result );
+
+                }catch( error ){
+                    console.error( error );
+                }
+
+            }else{
+                var error = new Error( "result cannot be stringify" );
+                console.error( error );
+            }
+        }
+    };
+
 	var methodParameterListLength = methodParameterList.length;
 	for( var index = 0; index < methodParameterListLength; index++ ){
 
 		parameterName = methodParameterList[ index ];
 
 		if( parameterName in commandArgumentSet ){
-			argumentValueList[ index ] = commandArgumentSet[ parameterName ]
-		}
+			argumentValueList[ index ] = commandArgumentSet[ parameterName ];
 
-		if( index in commandArgumentSet ){
+		}else if( index in commandArgumentSet ){
 			argumentValueList[ index ] = commandArgumentSet[ index ];
-		}
+
+		}else if( parameterName === "callback" ){
+            argumentValueList[ index ] = callback;
+
+        }else{
+            argumentValueList[ index ] = null;
+        }
 	}
-
-	var callback = function callback( error, result ){
-		if( error ){
-			console.error( error );
-
-		}else{
-			if( typeof result == "string" ||
-				typeof result == "number" ||
-				typeof result == "boolean" )
-			{
-				console.log( result );
-
-			}else if( typeof result == "object" ){
-				try{
-					result = JSON.stringify( result );
-					result = new Buffer( util.inspect( result, { "depth": null } ) ).toString( "base64" );
-					result = "@transform-base64-to-json:" + result;
-
-					console.log( result );
-
-				}catch( error ){
-					console.error( error );
-				}
-
-			}else{
-				var error = new Error( "result cannot be stringify" );
-				console.error( error );
-			}
-		}
-	};
 
 	var result = moduleMethod.apply( null, argumentValueList );
 
-	callback( null, result );
+    if( typeof result != "undefined" ){
+        callback( null, result );
+    }
 };
 
+var transformJSONToBase64 = require( "./transform-json-to-base64/transform-json-to-base64.js" );
 var parseCommandArgumentList = require( "./parse-command-argument-list/parse-command-argument-list.js" );
 var extractParameterListFromFunction = require( "./extract-parameter-list-from-function/extract-parameter-list-from-function.js" );
 var camelizeNamespace = require( "./camelize-namespace/camelize-namespace.js" );
 
 var path = require( "path" );
-var util = require( "util" );
 
 module.exports = attemptModuleExecution;
