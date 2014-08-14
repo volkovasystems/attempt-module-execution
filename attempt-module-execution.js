@@ -41,8 +41,8 @@
 
 	@include:
 		{
-		    "transform-json-to-base64.js@github.com/volkovasystems": "transformJSONToBase64"
-		    "parse-command-argument-list.js@github.com/volkovasystems": "parseCommandArgumentList",
+			"transform-json-to-base64.js@github.com/volkovasystems": "transformJSONToBase64"
+			"parse-command-argument-list.js@github.com/volkovasystems": "parseCommandArgumentList",
 			"extract-parameter-list-from-function.js@github.com/volkovasystems": "extractParameterListFromFunction",
 			"camelize-namespace.js@github.com/volkovasystems": "camelizeNamespace",
 			"path@nodejs": "path"
@@ -70,34 +70,34 @@ var attemptModuleExecution = function attemptModuleExecution( moduleMethod ){
 	var argumentValueList = [ ];
 	var parameterName = "";
 
-    var callback = function callback( error, result ){
-        if( error ){
-            console.error( error );
+	var callback = function callback( error, result ){
+		if( error ){
+			console.error( error );
 
-        }else{
-            if( typeof result == "string" ||
-                typeof result == "number" ||
-                typeof result == "boolean" )
-            {
-                console.log( result );
+		}else{
+			if( typeof result == "string" ||
+				typeof result == "number" ||
+				typeof result == "boolean" )
+			{
+				console.log( result );
 
-            }else if( typeof result == "object" ){
-                try{
-                    result = transformJSONToBase64( result );
-                    result = "@transform-base64-to-json:" + result;
+			}else if( typeof result == "object" ){
+				try{
+					result = transformJSONToBase64( result );
+					result = "@transform-base64-to-json:" + result;
 
-                    console.log( result );
+					console.log( result );
 
-                }catch( error ){
-                    console.error( error );
-                }
+				}catch( error ){
+					console.error( error );
+				}
 
-            }else{
-                var error = new Error( "result cannot be stringify" );
-                console.error( error );
-            }
-        }
-    };
+			}else{
+				var error = new Error( "result cannot be stringify" );
+				console.error( error );
+			}
+		}
+	};
 
 	var methodParameterListLength = methodParameterList.length;
 	for( var index = 0; index < methodParameterListLength; index++ ){
@@ -111,18 +111,23 @@ var attemptModuleExecution = function attemptModuleExecution( moduleMethod ){
 			argumentValueList[ index ] = commandArgumentSet[ index ];
 
 		}else if( parameterName === "callback" ){
-            argumentValueList[ index ] = callback;
+			argumentValueList[ index ] = callback;
 
-        }else{
-            argumentValueList[ index ] = null;
-        }
+		}else{
+			argumentValueList[ index ] = null;
+		}
 	}
 
-	var result = moduleMethod.apply( null, argumentValueList );
+	try{
+		var result = moduleMethod.apply( null, argumentValueList );
 
-    if( typeof result != "undefined" ){
-        callback( null, result );
-    }
+		if( typeof result != "undefined" ){
+			callback( null, result );
+		}
+
+	}catch( error ){
+		callback( error );
+	}
 };
 
 var transformJSONToBase64 = require( "./transform-json-to-base64/transform-json-to-base64.js" );
