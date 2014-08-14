@@ -7,3 +7,6 @@
 [submodule "parse-command-argument-list"]
 	path = parse-command-argument-list
 	url = git@github.com:volkovasystems/parse-command-argument-list.git
+[submodule "transform-json-to-base64"]
+	path = transform-json-to-base64
+	url = git@github.com:volkovasystems/transform-json-to-base64.git
