@@ -56,7 +56,7 @@ var attemptModuleExecution = function attemptModuleExecution( moduleMethod ){
 
 	var commandFileName = commandFilePath.split( path.sep ).reverse( )[ 0 ];
 	var commandNamespace = commandFileName.replace( FILE_EXTENSION_PATTERN, "" );
-	var commandMethodName = camelizeNamespace( commandNamespace );
+	var commandMethodName = camelizeNamespace( commandNamespace, true );
 
 	if( moduleMethod.name != commandMethodName ){
 		var error = new Error( "fatal:method and command does not match" );
