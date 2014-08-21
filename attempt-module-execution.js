@@ -55,7 +55,8 @@ var attemptModuleExecution = function attemptModuleExecution( moduleMethod ){
 	var commandFilePath = commandLineParameterList[ 1 ];
 
 	var commandFileName = commandFilePath.split( path.sep ).reverse( )[ 0 ];
-	var commandMethodName = camelizeNamespace( commandFileName );
+	var commandNamespace = commandFileName.replace( FILE_EXTENSION_PATTERN, "" );
+	var commandMethodName = camelizeNamespace( commandNamespace );
 
 	if( moduleMethod.name != commandMethodName ){
 		var error = new Error( "fatal:method and command does not match" );
@@ -129,6 +130,8 @@ var attemptModuleExecution = function attemptModuleExecution( moduleMethod ){
 		callback( error );
 	}
 };
+
+const FILE_EXTENSION_PATTERN = /\.[A-Za-z0-9]+$/;
 
 var transformJSONToBase64 = require( "./transform-json-to-base64/transform-json-to-base64.js" );
 var parseCommandArgumentList = require( "./parse-command-argument-list/parse-command-argument-list.js" );
