@@ -85,7 +85,7 @@ var attemptModuleExecution = function attemptModuleExecution( moduleMethod ){
 			}else if( typeof result == "object" ){
 				try{
 					result = transformJSONToBase64( result );
-					result = "@transform-base64-to-json:" + result;
+					result = annotate( result, "transform-base64-to-json" );
 
 					console.log( result );
 
@@ -137,6 +137,7 @@ var transformJSONToBase64 = require( "./transform-json-to-base64/transform-json-
 var parseCommandArgumentList = require( "./parse-command-argument-list/parse-command-argument-list.js" );
 var extractParameterListFromFunction = require( "./extract-parameter-list-from-function/extract-parameter-list-from-function.js" );
 var camelizeNamespace = require( "./camelize-namespace/camelize-namespace.js" );
+var annotate = require( "./annotate/annotate.js" );
 
 var path = require( "path" );
 
